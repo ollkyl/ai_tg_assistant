@@ -3,7 +3,7 @@ import cohere
 from dotenv import dotenv_values
 import json
 
-from prompt import prompt_1
+from prompt import prompt_assistant
 
 env_values = dotenv_values(".env")
 
@@ -63,7 +63,7 @@ def generate_response(user_id, user_message):
             max_tokens=200,  # Даем больше места для ответа
         )
 
-        print("Полный ответ Cohere:", response)  # 👀 Выводим ответ API
+        print("Полный ответ Cohere:", response)
 
         # Извлекаем текст
         if response.message and response.message.content:
@@ -86,17 +86,17 @@ async def handle_new_message(event):
 
     if not event.is_private:  # Игнорируем все, кроме личных сообщений
         return
-    global prompt_1
+    global prompt_assistant
     print(f"Новое сообщение от {sender.username}: {user_message}")
-    prompt_1 = (
-        prompt_1
+    prompt_assistant = (
+        prompt_assistant
         + f"Список доступных квартир:{apartments_str}"
         + f" клиент пишет :{user_message}"
     )
 
     # Если это первое сообщение в диалоге, даем специальный ответ
     if user_id not in dialogues:
-        response = generate_response(user_id, prompt_1)
+        response = generate_response(user_id, prompt_assistant)
         entity = await client.get_entity(user_id)
         await client.send_message(entity, "Добрый день, какая квартира вас интересует?")
     else:
@@ -106,7 +106,7 @@ async def handle_new_message(event):
         # if "11" in response:  #
         #     await client.send_message(entity, "какая квартира вас интересует?")
 
-        if "33" in response:  # apartmrnts
+        if "33" in response:
             for ap in apartments:
                 formatted_text = (
                     f"⭐️ Сдается {ap['name']}!\n\n"
@@ -116,8 +116,8 @@ async def handle_new_message(event):
                 )
                 await client.send_message(entity, formatted_text)
 
-        if "34" in response:  # apartmrnts
-            response = response[2:]  # убрать 2 первых символа
+        if "34" in response:
+            response = response[2:]
             id = int(response.strip())
             for ap in apartments:
                 if ap["id"] == id:

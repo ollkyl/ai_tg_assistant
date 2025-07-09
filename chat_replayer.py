@@ -2,7 +2,7 @@ import asyncio
 from telethon import TelegramClient, events
 from dotenv import dotenv_values
 import cohere
-from prompt import prompt_2
+from prompt import prompt_replayer
 
 # Загружаем переменные окружения
 env_values = dotenv_values(".env")
@@ -15,10 +15,8 @@ co = cohere.ClientV2(api_key=cohere_api_key)
 client = TelegramClient("session_name", api_id, api_hash)
 
 allowed_groups = [
-    "1848872259",
-    "1579548825",
-    "1509632160",
-    "1522020564",
+    "1234567890",
+    "0987654321",
 ]
 
 
@@ -30,7 +28,7 @@ async def generate_response(user_message):
         response = co.chat(
             model="command-r7b-12-2024",
             messages=[
-                {"role": "system", "content": prompt_2},
+                {"role": "system", "content": prompt_replayer},
                 {"role": "user", "content": user_message},
             ],
             max_tokens=50,
