@@ -1,0 +1,4 @@
+Telethon==1.38.1
+cohere==5.13.11
+python-dotenv==1.0.1
+
